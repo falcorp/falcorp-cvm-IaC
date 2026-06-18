@@ -21,3 +21,9 @@ module "s3" {
 
   environment = "dev"
 }
+
+module "security" {
+  source = "../../modules/security"
+
+  environment = "dev"
+}
