@@ -20,6 +20,7 @@ module "s3" {
   source = "../../modules/s3"
 
   environment = "dev"
+  kms_key_arn = module.security.kms_key_arn
 }
 
 module "security" {
@@ -27,3 +28,4 @@ module "security" {
 
   environment = "dev"
 }
+
