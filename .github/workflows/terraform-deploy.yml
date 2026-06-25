@@ -40,7 +40,7 @@ jobs:
           if [["${{github.ref}}" == "refs/heads/main"]]; then
             echo "environment=prod" >> $GITHUB_OUTPUT
             echo "terraform_dir=terraform/environments/production/" >> $GITHUB_OUTPUT
-          elif [["${{github.reg}}" == "refs/heads/dev"]]; then
+          elif [["${{github.ref}}" == "refs/heads/dev"]]; then
             echo "environment=dev" >> $GITHUB_OUTPUT
             echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
           else:
