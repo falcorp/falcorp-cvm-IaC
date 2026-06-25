@@ -76,6 +76,10 @@ jobs:
       TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
     
     steps:
+      - name: Debug Output Value
+        run: |
+          echo "The environment received is: '${{ needs.detect-environment.outputs.environment }}'"
+  
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Setup Terraform
