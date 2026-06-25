@@ -43,7 +43,7 @@ jobs:
           elif [[ "${{github.ref}}" == "refs/heads/dev" ]]; then
             echo "environment=dev" >> $GITHUB_OUTPUT
             echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
-          else:
+          else
             # PRS, determine from base branch
             if [[ "${{github.base_ref}}" == "refs/heads/main" ]]; then
               echo "environment=prod" >> $GITHUB_OUTPUT
