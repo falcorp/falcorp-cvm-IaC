@@ -69,9 +69,7 @@ jobs:
   terraform-ci:
     name: Terraform CI - ${{ needs.detect-environment.outputs.environment }}
     needs: detect-environment
-    concurrency:
-        group: terraform-${{ needs.detect-environment.outputs.environment }}
-        cancel-in-progress: false
+
     runs-on: ubuntu-24.04
     env:
       TF_VAR_environment: ${{ needs.detect-environment.outputs.environment }}
