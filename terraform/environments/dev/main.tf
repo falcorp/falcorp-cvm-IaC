@@ -1,3 +1,6 @@
+# ===============================================================
+# VPC
+# ===============================================================
 module "networking" {
   source = "../../modules/networking"
 
@@ -21,25 +24,28 @@ module "security" {
   environment = "dev"
 }
 
+module "iam" {
+  source = "../../modules/iam"
+
+  environment = "dev"
+}
+
 module "s3" {
   source = "../../modules/s3"
 
-  environment = "dev"
-  kms_key_arn = module.security.kms_key_arn
+  environment              = "dev"
+  kms_key_arn              = module.security.kms_key_arn
+  data_engineer_role_name  = module.iam.data_engineer_role_name
+  data_scientist_role_name = module.iam.data_scientist_role_name
+  data_analyst_role_name   = module.iam.data_analyst_role_name
 }
+
 module "sns" {
   source = "../../modules/sns"
 
   environment = "dev"
 }
-module "eventbridge" {
-  source = "../../modules/eventbridge"
 
-  environment          = "dev"
-  bucket_name          = module.s3.bucket_name
-  lambda_arn           = module.lambda.lambda_arn
-  lambda_function_name = module.lambda.lambda_function_name
-}
 module "lambda" {
   source = "../../modules/lambda"
 
@@ -49,6 +55,15 @@ module "lambda" {
   kms_key_arn   = module.security.kms_key_arn
 }
 
+module "eventbridge" {
+  source = "../../modules/eventbridge"
+
+  environment          = "dev"
+  bucket_name          = module.s3.bucket_name
+  lambda_arn           = module.lambda.lambda_arn
+  lambda_function_name = module.lambda.lambda_function_name
+}
+
 module "glue" {
   source = "../../modules/glue"
 
@@ -56,4 +71,4 @@ module "glue" {
   bucket_name = module.s3.bucket_name
   bucket_arn  = module.s3.bucket_arn
   kms_key_arn = module.security.kms_key_arn
-} 
+}
