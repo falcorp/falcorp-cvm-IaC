@@ -1,0 +1,41 @@
+resource "aws_cloudwatch_event_rule" "s3_object_created" {
+  name        = "cvm-${var.environment}-s3-object-created"
+  description = "Trigger Lambda when a new object is uploaded to the data lake bucket"
+
+
+event_pattern = jsonencode({
+  source      = ["aws.s3"]
+  detail-type = ["Object Created"]
+
+  detail = {
+    bucket = {
+      name = [var.bucket_name]
+    }
+
+    object = {
+      key = [{
+        prefix = "landing/"
+      }]
+    }
+  }
+})
+
+  tags = {
+    Name        = "cvm-${var.environment}-s3-object-created"
+    Environment = var.environment
+  }
+}
+
+resource "aws_cloudwatch_event_target" "lambda" {
+  rule      = aws_cloudwatch_event_rule.s3_object_created.name
+  target_id = "schema-validator-lambda"
+  arn       = var.lambda_arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.s3_object_created.arn
+}
