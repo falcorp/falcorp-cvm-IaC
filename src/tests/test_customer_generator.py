@@ -4,7 +4,7 @@ import os
 import sys
 from datetime import datetime
 
-from customer import CustomerFactory
+from modules.customer import CustomerFactory
 
 # Define temporary test path 
 TEST_OUTPUT_PATH = "../../data/test_customer_mock_data.csv"
@@ -14,12 +14,14 @@ def cleanup_test_files():
     yield
     if os.path.exists(TEST_OUTPUT_PATH):
         os.remove(TEST_OUTPUT_PATH)
+
 @pytest.fixture(scope="class")
 def class_scoped_customer():
-    return CustomerFactory.generate_customer()
+    return CustomerFactory(seed=40).generate_customer()
+
 class TestCustomerCreation:
 
-    def test_customer_attributes():
+    def test_customer_attributes(self, class_scoped_customer):
         expected_attributes = [
             "customer_id", "registration_date", "termination_date",
             "date_of_birth", "gender", "signup_channel", 
@@ -31,7 +33,7 @@ class TestCustomerCreation:
         
         assert expected_attributes == list(class_scoped_customer.keys())
 
-    def test_customer_registration_date():
+    def test_customer_registration_date(self, class_scoped_customer):
 
         def convert_iso_to_date(target_iso):
             try:
@@ -41,10 +43,11 @@ class TestCustomerCreation:
             except ValueError as e:
                 print(f"Invalid ISO 8601 format: {e}")
                 return None
-        
-        start = datetime(2020,1,1)
+        registration_date = class_scoped_customer.get("registration_date")
+        start = datetime(2020,1,1).date()
         end = datetime.now().date()
-        assert start <= convert_iso_to_date(class_scoped_customer.registration_date) <= end
+
+        assert start <= convert_iso_to_date(registration_date) <= end
 
 def test_generate_to_csv_creates_files():
     pass
