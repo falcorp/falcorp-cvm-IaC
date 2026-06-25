@@ -39,7 +39,7 @@ jobs:
         run: |
           if [["${{github.ref}}" == "refs/heads/main"]]; then
             echo "environment=prod" >> $GITHUB_OUTPUT
-            echo "terraform_dir=terraform/environments/production/" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/environments/production" >> $GITHUB_OUTPUT
           elif [["${{github.ref}}" == "refs/heads/dev"]]; then
             echo "environment=dev" >> $GITHUB_OUTPUT
             echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
@@ -47,10 +47,10 @@ jobs:
             # PRS, determine from base branch
             if [["${{github.base_ref}}" == "refs/heads/main"]]; then
               echo "environment=prod" >> $GITHUB_OUTPUT
-              echo "terraform_dir=terraform/environments/production/" >> $GITHUB_OUTPUT
+              echo "terraform_dir=terraform/environments/production" >> $GITHUB_OUTPUT
             else
               echo "environment=dev" >> $GITHUB_OUTPUT
-              echo "terraform_dir=terraform/environments/dev/" >> $GITHUB_OUTPUT
+              echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
             fi
           fi
   run_job_with_aws:
@@ -69,7 +69,6 @@ jobs:
   terraform-ci:
     name: Terraform CI - ${{ needs.detect-environment.outputs.environment }}
     needs: detect-environment
-
     runs-on: ubuntu-24.04
     env:
       TF_VAR_environment: ${{ needs.detect-environment.outputs.environment }}
