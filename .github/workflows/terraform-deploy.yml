@@ -53,6 +53,8 @@ jobs:
               echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
             fi
           fi
+          echo "The environment ${{ steps.set-env.outputs.environment}}"
+          echo "The terraform_dir ${{ steps.set-env.outputs.terraform_dir }}"
 
   run_job_with_aws:
     runs-on: ubuntu-latest
