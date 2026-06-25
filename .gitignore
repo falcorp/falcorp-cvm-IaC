@@ -5,3 +5,10 @@
 crash.log
 crash.*.log
 *.tfvars
+terraform/modules/lambda/*.zip
+terraform/environments/dev/subscribers.csv
+
+terraform/environments/dev/test.csv
+
+
+
