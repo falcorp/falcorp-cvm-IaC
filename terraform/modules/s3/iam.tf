@@ -22,7 +22,7 @@ resource "aws_iam_role_policy_attachment" "data_scientist_data_lake_policy_attac
 }
 
 # Data Analyst
-resource "aws_iam_policy" "data_analyst_iam_policy" {
+resource "aws_iam_policy" "data_analyst_data_lake_policy" {
     name = "Falcorp-CVM-data-analyst-data-lake-policy-${var.environment}"
     description = "Policy to govern data analyst access to S3 data lake."
     policy = data.aws_iam_policy_document.data_analyst_data_lake_policy.json
