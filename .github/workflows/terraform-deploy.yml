@@ -1,0 +1,162 @@
+name: Falcorp CVM IAC GITHUB Terraform Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+      - main
+    paths:
+      - "environment/**"
+      - ".github/workflows/terraform-deploy.yml"
+  pull_request:
+    branches:
+      - dev
+      - main
+    paths:
+      - "environment/**"
+      - ".github/workflows/terraform-deploy.yml"
+
+# Need ID token write permission to use OIDC
+permissions:
+  id-token: write # request and use an OIDC token (JWT) for an action or step.
+  contents: read # required for actions/checkout
+  pull-requests: write
+
+env:
+  TERRAFORM_VERSION: '1.14.3' # TO Change with correct version
+
+jobs:
+  detect-environment:
+    name: Detect Deployment environment
+    runs-on: ubuntu-24.04 # To change with latest LTS version
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment}}
+      terraform_dir: ${{ steps.set-env.outputs.terraform_dir }}
+    steps:
+      - name: Determine environment from branch
+        id: set-env
+        run: |
+          if [[ "${{github.ref}}" == "refs/heads/main" ]]; then
+            echo "environment=prod" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/environments/production" >> $GITHUB_OUTPUT
+          elif [[ "${{github.ref}}" == "refs/heads/dev" ]]; then
+            echo "environment=dev" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
+          else:
+            # PRS, determine from base branch
+            if [[ "${{github.base_ref}}" == "refs/heads/main" ]]; then
+              echo "environment=prod" >> $GITHUB_OUTPUT
+              echo "terraform_dir=terraform/environments/production" >> $GITHUB_OUTPUT
+            else
+              echo "environment=dev" >> $GITHUB_OUTPUT
+              echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  run_job_with_aws:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE}} # AWS ROLE TO BE CREATED IN IAM FOR GITHUB CI/CD
+          aws-region: ${{secrets.AWS_REGION}} # Not Necessarry just for test
+      - name:
+        run: |
+          # COMMANDS that require AWS Credentials
+          aws sts get-caller-identity
+  
+  terraform-ci:
+    name: Terraform CI - ${{ needs.detect-environment.outputs.environment }}
+    needs: detect-environment
+    runs-on: ubuntu-24.04
+    env:
+      TF_VAR_environment: ${{ needs.detect-environment.outputs.environment }}
+      TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1 # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+          aws-region: ${{secrets.AWS_REGION }}
+          role-session-name: terraform-ci${{ github.run_id }}
+      - name: Set TF Vars
+        run: |
+          # CORE PROJECT VARIABLES
+          echo "TF_VAR_project=FALCORP-CVM" >> $GITHUB_ENV
+          echo "TF_VAR_state_bucket=falcorp-cvm-terraform-state-${{needs.detect-environment.outputs.environment }}" >> $GITHUB_ENV
+      
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v6
+        with:
+          tflint_version: latest
+      
+      - name: Run Liniting
+        id: lint
+        working-directory: ${{ needs.detect-environment.outputs.terraform_dir}}
+        run: tflint --format compact
+        continue-on-error: true
+      
+      - name: Terraform Init
+        id: init
+        working-directory: ${{ needs.detect-environment.outputs.terraform_dir}}
+        run: terraform init -lock-timeout=5m
+      
+      - name: Terraform Validate
+        id: validate
+        working-directory: ${{ needs.detect-environment.outputs.terraform_dir}}
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ needs.detect-environment.outputs.terraform_dir}}
+        timeout-minutes: 15
+        run: |
+          terraform plan -input=false -lock-timeout=3m -no-color -out=tfplan 2>&1
+          terraform show -no-color tfplan > plan_output.txt
+        continue-on-error: false
+  
+  terraform-cd:
+    name: Terraform CD ${{ needs.detect-environment.outputs.environment}}
+    needs: [detect-environment, terraform-ci]
+    concurrency:
+      group: terraform-deploy-${{ needs.detect-environment.outputs.environment }}
+      cancel-in-progress: false
+    if: github.event_name == 'push' && (github.ref == 'refs/head/main' || github.ref == 'refs/head/dev')
+    runs-on: ubuntu-24.04
+    env:
+      TF_VAR_environment: ${{ needs.detect-environment.outputs.environment }}
+      TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+    environment:
+      name: ${{ needs.detect-environment.outputs.environment}}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{env.TERRAFORM_VERSION}}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1 # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: terraform-ci-${{github.run_id}}
+      - name: SET TF Vars
+        run: |
+          # Core project variables
+          echo "TF_VAR_project=FALCORP-CVM" >> $GITHUB_ENV
+          echo "TF_VAR_state_bucket=falcorp-cvm-terraform-state-${{needs.detect-environment.outputs.environment }}" >> $GITHUB_ENV
+      - name: Terraform Apply
+        id: apply
+        working-directory: ${{ needs.detect-environment.outputs.terraform_dir}}
+        run: |
+          terraform apply -auto-approve tfplan
