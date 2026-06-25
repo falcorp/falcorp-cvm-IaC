@@ -24,17 +24,17 @@ module "networking" {
 module "s3" {
   source = "../../modules/s3"
   environment = "dev"
-  kms_key_arn = module.security.kms_key_arn
+  # kms_key_arn = module.security.kms_key_arn
   data_engineer_role_name = module.iam.data_engineer_role_name
   data_scientist_role_name = module.iam.data_scientist_role_name
   data_analyst_role_name = module.iam.data_analyst_role_name
 }
 
-module "security" {
-  source = "../../modules/security"
+# module "security" {
+#   source = "../../modules/security"
 
-  environment = "dev"
-}
+#   environment = "dev"
+# }
 
 # ===============================================================
 # IAM

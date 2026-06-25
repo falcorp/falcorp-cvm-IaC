@@ -10,6 +10,6 @@ output "private_subnet_ids" {
   value = module.networking.private_subnet_ids
 }
 
-output "platform_kms_key_arn" {
-  value = module.security.kms_key_arn
-}
+# output "platform_kms_key_arn" {
+#   value = module.security.kms_key_arn
+# }

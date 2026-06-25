@@ -1,5 +1,5 @@
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
+# data "aws_region" "current" {}
+# data "aws_caller_identity" "current" {}
 
 # Data Engineer Role - Full access to sensitive and general data
 resource "aws_iam_role" "data_engineer" {
