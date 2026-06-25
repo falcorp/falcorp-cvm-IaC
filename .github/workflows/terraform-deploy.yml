@@ -114,7 +114,7 @@ jobs:
       - name: Terraform Init
         id: init
         working-directory: ${{ needs.detect-environment.outputs.terraform_dir}}
-        run: terraform init -lock-timeout=5m
+        run: terraform init -input=false -migrate-state -force-copy -lock-timeout=5m
       
       - name: Terraform Validate
         id: validate
