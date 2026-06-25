@@ -39,18 +39,18 @@ jobs:
         run: |
           if [["${{github.ref}}" == "refs/heads/main"]]; then
             echo "environment=prod" >> $GITHUB_OUTPUT
-            echo "terraform_dir=environments/production/" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/environments/production/" >> $GITHUB_OUTPUT
           elif [["${{github.reg}}" == "refs/heads/dev"]]; then
             echo "environment=dev" >> $GITHUB_OUTPUT
-            echo "terraform_dir=environments/dev" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/environments/dev" >> $GITHUB_OUTPUT
           else:
             # PRS, determine from base branch
             if [["${{github.base_ref}}" == "refs/heads/main"]]; then
               echo "environment=prod" >> $GITHUB_OUTPUT
-              echo "terraform_dir=environments/production/" >> $GITHUB_OUTPUT
+              echo "terraform_dir=terraform/environments/production/" >> $GITHUB_OUTPUT
             else
               echo "environment=dev" >> $GITHUB_OUTPUT
-              echo "terraform_dir=environments/dev/" >> $GITHUB_OUTPUT
+              echo "terraform_dir=terraform/environments/dev/" >> $GITHUB_OUTPUT
             fi
           fi
   run_job_with_aws:
