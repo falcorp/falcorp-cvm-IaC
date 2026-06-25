@@ -27,7 +27,7 @@ resource "aws_iam_policy" "data_analyst_iam_policy" {
     description = "Policy to govern data analyst access to S3 data lake."
     policy = data.aws_iam_policy_document.data_analyst_data_lake_policy.json
 }
-resource "aws_iam_role_policy_attachement" "data_analyst_data_lake_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "data_analyst_data_lake_policy_attachment" {
     role = var.data_analyst_role_name
     policy_arn = aws_iam_policy.data_analyst_data_lake_policy.arn
 }
