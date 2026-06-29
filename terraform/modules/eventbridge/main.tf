@@ -78,3 +78,37 @@ resource "aws_lambda_permission" "allow_eventbridge_to_start_glue" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.raw_object_created.arn
 }
+
+resource "aws_cloudwatch_event_rule" "glue_job_succeeded" {
+  name        = "cvm-${var.environment}-glue-job-succeeded"
+  description = "Trigger crawler starter when Glue ETL job succeeds"
+
+  event_pattern = jsonencode({
+    source      = ["aws.glue"]
+    detail-type = ["Glue Job State Change"]
+
+    detail = {
+      jobName = [var.glue_job_name]
+      state   = ["SUCCEEDED"]
+    }
+  })
+
+  tags = {
+    Name        = "cvm-${var.environment}-glue-job-succeeded"
+    Environment = var.environment
+  }
+}
+
+resource "aws_cloudwatch_event_target" "crawler_starter_lambda" {
+  rule      = aws_cloudwatch_event_rule.glue_job_succeeded.name
+  target_id = "crawler-starter-lambda"
+  arn       = var.crawler_starter_lambda_arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_to_start_crawler" {
+  statement_id  = "AllowExecutionFromGlueSuccessEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = var.crawler_starter_lambda_function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.glue_job_succeeded.arn
+}
