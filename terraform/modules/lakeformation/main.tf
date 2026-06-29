@@ -9,11 +9,11 @@ resource "aws_lakeformation_permissions" "data_engineer_database" {
   database {
     name = var.database_name
   }
-}
+} 
 
 resource "aws_lakeformation_permissions" "data_scientist_database" {
   principal   = var.data_scientist_role_arn
-  permissions = ["DESCRIBE"]
+  permissions = ["ALL", "DESCRIBE"]
 
   database {
     name = var.database_name
@@ -22,7 +22,7 @@ resource "aws_lakeformation_permissions" "data_scientist_database" {
 
 resource "aws_lakeformation_permissions" "data_analyst_database" {
   principal   = var.data_analyst_role_arn
-  permissions = ["DESCRIBE"]
+  permissions = ["ALL", "DESCRIBE"]
 
   database {
     name = var.database_name
