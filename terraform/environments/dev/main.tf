@@ -62,6 +62,7 @@ module "eventbridge" {
   bucket_name          = module.s3.bucket_name
   lambda_arn           = module.lambda.lambda_arn
   lambda_function_name = module.lambda.lambda_function_name
+  glue_job_name        = module.glue.subscribers_etl_job_name
 }
 
 module "glue" {
@@ -72,3 +73,4 @@ module "glue" {
   bucket_arn  = module.s3.bucket_arn
   kms_key_arn = module.security.kms_key_arn
 }
+

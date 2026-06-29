@@ -8,7 +8,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "falcorp-cvm-terraform-state-${var.environment}"
+    bucket = "falcorp-cvm-terraform-state-dev"
     key = "infra-team-lakehouse/terraform.tfstate"
     region = "af-south-1"
     encrypt = true
