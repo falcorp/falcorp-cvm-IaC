@@ -92,3 +92,21 @@ module "crawler_starter_lambda" {
   environment  = "dev"
   crawler_name = "cvm-dev-curated-subscribers-crawler"
 }
+
+module "athena" {
+  source = "../../modules/athena"
+
+  environment = "dev"
+  kms_key_arn = module.security.kms_key_arn
+  tags        = var.tags
+}
+module "lakeformation" {
+  source = "../../modules/lakeformation"
+
+  environment             = "dev"
+  datalake_bucket_arn     = module.s3.bucket_arn
+  database_name           = module.glue.database_name
+  data_engineer_role_arn  = module.iam.data_engineer_role_arn
+  data_scientist_role_arn = module.iam.data_scientist_role_arn
+  data_analyst_role_arn   = module.iam.data_analyst_role_arn
+}
