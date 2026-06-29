@@ -15,4 +15,12 @@ variable "lambda_function_name" {
 }
 variable "glue_job_name" {
   type = string
+} 
+
+variable "glue_starter_lambda_arn" {
+  type = string
+}
+
+variable "glue_starter_lambda_function_name" {
+  type = string
 }

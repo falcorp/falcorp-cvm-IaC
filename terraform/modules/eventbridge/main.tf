@@ -65,3 +65,16 @@ resource "aws_cloudwatch_event_rule" "raw_object_created" {
     Environment = var.environment
   }
 }
+resource "aws_cloudwatch_event_target" "glue_starter_lambda" {
+  rule      = aws_cloudwatch_event_rule.raw_object_created.name
+  target_id = "glue-starter-lambda"
+  arn       = var.glue_starter_lambda_arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_to_start_glue" {
+  statement_id  = "AllowExecutionFromRawEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = var.glue_starter_lambda_function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.raw_object_created.arn
+}

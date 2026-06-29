@@ -7,7 +7,7 @@ crash.*.log
 *.tfvars
 terraform/modules/lambda/*.zip
 terraform/environments/dev/subscribers.csv
-
+terraform/modules/glue_starter_lambda/*.zip
 terraform/environments/dev/test.csv
 
 
