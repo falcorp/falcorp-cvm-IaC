@@ -58,11 +58,13 @@ module "lambda" {
 module "eventbridge" {
   source = "../../modules/eventbridge"
 
-  environment          = "dev"
-  bucket_name          = module.s3.bucket_name
-  lambda_arn           = module.lambda.lambda_arn
-  lambda_function_name = module.lambda.lambda_function_name
-  glue_job_name        = module.glue.subscribers_etl_job_name
+  environment                       = "dev"
+  bucket_name                       = module.s3.bucket_name
+  lambda_arn                        = module.lambda.lambda_arn
+  lambda_function_name              = module.lambda.lambda_function_name
+  glue_job_name                     = module.glue.subscribers_etl_job_name
+  glue_starter_lambda_arn           = module.glue_starter_lambda.lambda_arn
+  glue_starter_lambda_function_name = module.glue_starter_lambda.lambda_function_name
 }
 
 module "glue" {
@@ -73,4 +75,9 @@ module "glue" {
   bucket_arn  = module.s3.bucket_arn
   kms_key_arn = module.security.kms_key_arn
 }
+module "glue_starter_lambda" {
+  source = "../../modules/glue_starter_lambda"
 
+  environment   = "dev"
+  glue_job_name = module.glue.subscribers_etl_job_name
+}

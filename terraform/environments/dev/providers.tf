@@ -8,12 +8,12 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "falcorp-cvm-terraform-state-dev"
-    key = "infra-team-lakehouse/terraform.tfstate"
-    region = "af-south-1"
-    encrypt = true
+    bucket       = "falcorp-cvm-terraform-state-dev"
+    key          = "infra-team-lakehouse/terraform.tfstate"
+    region       = "af-south-1"
+    encrypt      = true
     use_lockfile = true
-    
+
   }
 }
 
@@ -22,9 +22,9 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = var.environment
-      ManagedBy = "Terraform"
-      Project = "Falcorp CVM"
-      Owner = "Falcorp"
+      ManagedBy   = "Terraform"
+      Project     = "Falcorp CVM"
+      Owner       = "Falcorp"
     }
   }
 }
