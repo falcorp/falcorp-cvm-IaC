@@ -1,0 +1,43 @@
+name: Falcorp CVM IAC GITHUB SRC CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+      - main
+    paths:
+      - "src/**"
+      - ".github/workflows/src-ci.yml"
+  pull_request:
+    branches:
+      - dev
+      - main
+    paths:
+      - "src/**"
+      - ".github/workflows/src-ci.yml"
+
+jobs:
+    python-tests:
+        name: Run Python Tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            
+            - name: Set up Python Environment
+              uses: actions/setup-python@v5
+              with:
+                python-version: "3.13"
+                cache: "pip" # automated caching for pip dependencies
+            
+            - name: Install Dependencies
+              run: |
+                cd src/ 
+                pip install -r requirements.txt
+            
+            - name: Execute Pytest Suite
+              run: |
+                cd src/ 
+                pytest
+

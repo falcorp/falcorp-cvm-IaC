@@ -136,7 +136,7 @@ jobs:
     concurrency:
       group: terraform-deploy-${{ needs.detect-environment.outputs.environment }}
       cancel-in-progress: false
-    if: github.event_name == 'push' && (github.ref == 'refs/head/main' || github.ref == 'refs/head/dev')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
     runs-on: ubuntu-24.04
     env:
       TF_VAR_environment: ${{ needs.detect-environment.outputs.environment }}
