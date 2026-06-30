@@ -85,3 +85,47 @@ class DeviceProvider(BaseProvider):
         statuses = ["Active", "Suspended", "Replaced"]
         return self.random_element(statuses)
     
+
+class ProductProvider(BaseProvider):
+    def product_id(self):
+        return generate_short_id(prefix="PROD")
+    
+    def product_name(self):
+        product_names = [
+            "TikTok & Chill Starter", "Social Storm Unlimited",
+            "The Infinite Scroll", "Ping Master Elite",
+            "Light & Easy Monthly", "The Keep-In-Touch Plan"
+        ]
+        return self.random_element(product_names)
+    def product_type(self):
+        product_types = [
+            "BASE_PLAN", "DATA_ADDON", "ROAMING_PASS", "VOICE_ADDON", "SMS_ADDON"
+        ]
+        return self.random_element(product_types)
+    def billing_type(self):
+        billing_types = [
+            "Postpaid", "Prepaid"
+        ]
+        return self.random_element(billing_types)
+    def product_price(self):
+        random_prices = [
+            -1, 30, 45, 99, 50, 99, 149
+        ]
+        return self.random_element(random_prices)
+    
+    def data_gb_allowance(self):
+        gb_allowance_spread = [
+            -1, 0, 1, 2, 3, 5, 8, 13, 21
+        ]
+        return self.random_element(gb_allowance_spread)
+    def voice_minutes_allowance(self):
+        voice_minutes_spread = [
+            -1, 0, 5, 10, 15, 25, 40, 65, 105, 170
+        ]
+        return self.random_element(voice_minutes_spread)
+    def sms_count_allowance(self):
+        sms_count_spread = [
+            -1, 0, 10, 30, 40, 70, 110
+        ]
+        return self.random_element(sms_count_spread)
+    
