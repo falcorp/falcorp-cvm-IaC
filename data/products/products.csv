@@ -1,21 +1,6 @@
-product_id,product_name,product_type,billing_type,product_price,data_gb_allowance,voice_minutes_allowance,sms_count_allowance
-PROD-6D37B373,The Keep-In-Touch Plan,BASE_PLAN,Postpaid,99,3,10,0
-PROD-826A42A6,Social Storm Unlimited,BASE_PLAN,Postpaid,50,8,-1,-1
-PROD-DEAFE682,TikTok & Chill Starter,DATA_ADDON,Postpaid,50,-1,105,0
-PROD-7E100880,The Keep-In-Touch Plan,SMS_ADDON,Prepaid,30,13,170,10
-PROD-B2670878,TikTok & Chill Starter,DATA_ADDON,Prepaid,45,3,5,0
-PROD-493DE3EE,The Infinite Scroll,BASE_PLAN,Postpaid,99,0,25,110
-PROD-3E1C472B,The Infinite Scroll,SMS_ADDON,Prepaid,149,-1,65,40
-PROD-81C90D4D,TikTok & Chill Starter,VOICE_ADDON,Postpaid,50,3,170,110
-PROD-ABC7A752,The Infinite Scroll,SMS_ADDON,Postpaid,99,0,-1,70
-PROD-8A21BD2F,Social Storm Unlimited,ROAMING_PASS,Postpaid,149,2,0,30
-PROD-000A2559,The Infinite Scroll,VOICE_ADDON,Prepaid,30,5,25,0
-PROD-2723DEC7,The Keep-In-Touch Plan,ROAMING_PASS,Postpaid,50,1,105,70
-PROD-B3E02EC0,Social Storm Unlimited,DATA_ADDON,Prepaid,99,3,105,0
-PROD-305F7608,The Keep-In-Touch Plan,ROAMING_PASS,Postpaid,30,-1,25,30
-PROD-0BCBAAA7,The Infinite Scroll,BASE_PLAN,Postpaid,50,5,10,70
-PROD-3B78B10E,Ping Master Elite,VOICE_ADDON,Prepaid,30,3,5,0
-PROD-DA31F6E7,The Keep-In-Touch Plan,SMS_ADDON,Prepaid,99,8,170,30
-PROD-B097BA23,The Infinite Scroll,DATA_ADDON,Postpaid,50,13,0,110
-PROD-87A75C18,TikTok & Chill Starter,BASE_PLAN,Postpaid,99,1,40,40
-PROD-17F1F486,TikTok & Chill Starter,VOICE_ADDON,Prepaid,50,13,105,10
+product_id,plan_id,product_name,product_type,billing_type,product_price,data_gb_allowance,voice_minutes_allowance,sms_count_allowance
+PROD-05A20372,2,TikTok & Chill Starter,SMS_ADDON,Postpaid,50,8,-1,-1
+PROD-D994671D,5,Light & Easy Monthly,BASE_PLAN,Postpaid,30,21,170,-1
+PROD-76542BD0,1,The Infinite Scroll,SMS_ADDON,Postpaid,99,21,40,0
+PROD-D44DD60F,3,Social Storm Unlimited,VOICE_ADDON,Prepaid,149,-1,5,70
+PROD-CBAF4C3F,4,Ping Master Elite,VOICE_ADDON,Prepaid,45,1,10,110

@@ -29,11 +29,11 @@ if __name__ == "__main__":
     number_of_customers = 25000
     customer_factory = CustomerFactory(seed=SEED)
     
-    customer_generator = (customer_factory.generate_customer() for _ in range(number_of_customers))
+    customer_generator = (customer_factory.generate_customer().to_dict() for _ in range(number_of_customers))
         
     device_generator = stream_devices(customer_generator)
 
-    df = pd.DataFrame(device_generator)
+    df = pd.DataFrame(customer_generator)
     file_path = TARGET_DIR / "customers.csv"
 
     df.to_csv(file_path, index=False)
