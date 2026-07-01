@@ -7,7 +7,7 @@ crash.*.log
 *.tfvars
 
 src/.venv
-
+data/cdrs/cdrs.csv
 
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python

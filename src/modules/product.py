@@ -16,6 +16,7 @@ class ProductFactory(BaseDataGenerator):
     def generate_product(self):
         return {
             "product_id":self.fake.product_id(),
+            "plan_id": self.fake.plan_id(),
             "product_name": self.fake.product_name(),
             "product_type": self.fake.product_type(),
             "billing_type": self.fake.billing_type(),

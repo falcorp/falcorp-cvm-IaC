@@ -15,7 +15,7 @@ if __name__ == "__main__":
     TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
     SEED = 42
-    number_of_products = 20
+    number_of_products = 5
     product_factory = ProductFactory(seed=SEED)
     product_generator = (product_factory.generate_product() for _ in range(number_of_products))
 

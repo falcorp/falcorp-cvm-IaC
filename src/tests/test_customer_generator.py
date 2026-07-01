@@ -31,7 +31,7 @@ class TestCustomerCreation:
             "payment_method"
         ]
         
-        assert expected_attributes == list(class_scoped_customer.keys())
+        assert expected_attributes == list(class_scoped_customer.to_dict().keys())
 
     def test_customer_registration_date(self, class_scoped_customer):
 
@@ -43,7 +43,7 @@ class TestCustomerCreation:
             except ValueError as e:
                 print(f"Invalid ISO 8601 format: {e}")
                 return None
-        registration_date = class_scoped_customer.get("registration_date")
+        registration_date = class_scoped_customer.registration_date
         start = datetime(2020,1,1).date()
         end = datetime.now().date()
 

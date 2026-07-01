@@ -87,16 +87,31 @@ class DeviceProvider(BaseProvider):
     
 
 class ProductProvider(BaseProvider):
+    def __init__(self, generator):
+        super().__init__(generator)
+        self.product_names = [
+            "TikTok & Chill Starter", "Social Storm Unlimited",
+            "The Infinite Scroll", "Ping Master Elite",
+            "Light & Easy Monthly",
+        ]
+        self.plan_ids = list(range(1,6,1))
+        self.generator.random.shuffle(self.product_names)
+        self.generator.random.shuffle(self.plan_ids)
+
     def product_id(self):
         return generate_short_id(prefix="PROD")
     
+    def plan_id(self):
+        if not self.plan_ids:
+            raise ValueError("Exhausted all unique plan ids in the pool!")
+        return self.plan_ids.pop()
+    
+    
     def product_name(self):
-        product_names = [
-            "TikTok & Chill Starter", "Social Storm Unlimited",
-            "The Infinite Scroll", "Ping Master Elite",
-            "Light & Easy Monthly", "The Keep-In-Touch Plan"
-        ]
-        return self.random_element(product_names)
+        if not self.product_names:
+            raise ValueError("Exhausted all unique product names in the pool!")
+        return self.product_names.pop()
+        
     def product_type(self):
         product_types = [
             "BASE_PLAN", "DATA_ADDON", "ROAMING_PASS", "VOICE_ADDON", "SMS_ADDON"
@@ -129,3 +144,69 @@ class ProductProvider(BaseProvider):
         ]
         return self.random_element(sms_count_spread)
     
+
+
+class CallDetailRecordProvider(BaseProvider):
+    def generate_za_msisdn(self):
+        prefixes = [
+            "60", "61", "62", "63","64" ,"65",
+            "71", "72", "73", "74", "75", "76",
+            "81", "82", "83", "84", "85"
+        ]
+        prefix = random.choice(prefixes)
+        subscriber_number = "".join(str(random.randint(0,0)) for _ in range(7))
+        return f"27{prefix}{subscriber_number}"
+    
+    def determine_bytes_used(self, channel:str):
+
+        if channel == "Retail_Partner" or channel == "Affiliate":
+            return random.randint(a=512, b=2*1024*1024)
+        else:
+            return random.randint(a=1*1024*1024, b=75*1024*1024)
+    
+    def record_detail(self):
+        return str(uuid.uuid4())
+    def originating_point(self):
+        return self.generate_za_msisdn()
+    def cdr_type(self):
+        cdr_types = ["voice", "data", "sms"]
+        cdr_weights = [0.75, 0.15, 0.1]
+        return random.choices(population=cdr_types, weights=cdr_weights, k=1)[0]
+        
+    def cdr_direction(self, cdr_type:str):
+        direction_choices = ["originating", "terminating"]
+
+        if cdr_type == "voice":
+            direction_weights = [0.75, 0.25]
+        elif cdr_type == "data":
+            direction_weights = [0.95, 0.05]
+        else:
+            direction_weights = [0.55, 0.45]
+        
+        return random.choices(population=direction_choices, weights=direction_weights, k=1)[0]
+    
+    def create_datetime_start(self, customer_registration_datetime:str):
+        start_datetime = datetime.fromisoformat(customer_registration_datetime)
+        end_datetime = datetime(2026,6,1)
+        random_datetime = Faker().date_time_between(start_date=start_datetime, end_date=end_datetime).isoformat()
+        return random_datetime
+    
+
+    def create_session_duration(self, cdr_type:str):
+        # duration of session in seconds for voice and data
+        # number of messages for sms
+        # 0 for unsuccessful sessions
+        if cdr_type == "voice" or cdr_type == "data":
+            duration_spread = random.randint(0, 3600)
+        else:
+            duration_spread = random.randint(0, 10)
+        return duration_spread
+    
+    def create_session_size(self, cdr_type:str, signup_channel:str):
+        if cdr_type == "data":
+            size = self.determine_bytes_used(channel=signup_channel)
+        else:
+            size = 0
+        return size
+    
+        
